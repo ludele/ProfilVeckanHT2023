@@ -1,7 +1,7 @@
 import Database from "./database.js";
 import RaceManager from "./racemanager.js";
 
-const url = "";
+const url = ""; // Insert mongoDB connection URL
 const dbName = "carRace";
 
 const database = new Database(url, dbName);
