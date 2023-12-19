@@ -1,33 +1,27 @@
-import { MongoClient } from "mongodb";
+import Database from "./database.js";
+import RaceManager from "./racemanager.js";
 
-async function connectToDatabase() {
-  const url = "mongodb://217.210.129.243:27017";
-  const dbName = "carRace";
+const url = "";
+const dbName = "carRace";
 
+const database = new Database(url, dbName);
+const raceManager = new RaceManager(database);
+
+async function start() {
   try {
-    const client = await MongoClient.connect(url, { useUnifiedTopology: true });
-    console.log("Connected to MongoDB server");
+    await database.connect();
 
-    const db = client.db(dbName);
-    
-    
-    const collection = db.collection("race");
-    const documents = await collection.find({}).toArray();
-    console.log("Documents in the 'race' collection:", documents);
+    const races = await raceManager.getAllRaces();
 
-    await db.collection("race").updateOne({
-      "driverName": "jk", 
-   }, { 
-      "$set" : {
-      "carName": "jk"
-      }
-   });
+    await raceManager.insertValue("driverName", "PeilinXie", "driverName", "Peilin Xie");
 
-    await client.close();
-    console.log("Connection closed");
+    await raceManager.getAllRaces();
+
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    console.error("Framework error:", error);
+  } finally {
+    await database.disconnect();
   }
 }
 
-connectToDatabase();
+start();
